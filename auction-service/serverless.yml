@@ -1,23 +1,30 @@
 service: auction-service
 
-plugins:
-  - serverless-bundle
-  - serverless-pseudo-parameters
-
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: nodejs18.x
   memorySize: 256
   stage: ${opt:stage, 'dev'}
+  lambdaHashingVersion: "20201221"
+  profile: serverless-terraform
 
 functions:
-  hello:
-    handler: src/handlers/hello.handler
+  createAuction:
+    handler: src/handlers/createAuction.handler
     events:
       - http:
-          method: GET
-          path: /hello
+          method: POST
+          path: /auction
+
+build:
+  esbuild: false
 
 custom:
   bundle:
     linting: false
+
+package:
+  exclude:
+    - node_modules/aws-sdk/** # Excluir pacotes que já existem no Lambda
+    - tests/** # Excluir pastas de teste
+    - docs/** # Excluir documentação
